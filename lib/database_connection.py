@@ -11,8 +11,8 @@ from psycopg.rows import dict_row
 # That's why we have provided it!
 class DatabaseConnection:
     # VVV CHANGE BOTH OF THESE VVV
-    DEV_DATABASE_NAME = "DEFAULT_MAKERS_PROJECT"
-    TEST_DATABASE_NAME = "DEFAULT_MAKERS_PROJECT_TEST"
+    DEV_DATABASE_NAME = "music_web_app"
+    TEST_DATABASE_NAME = "music_web_app_test"
 
     def __init__(self, test_mode=False):
         self.test_mode = test_mode
@@ -71,8 +71,17 @@ class DatabaseConnection:
 
 # This function integrates with Flask to create one database connection that
 # Flask request can use. To see how to use it, look at example_routes.py
+    # def get_flask_database_connection(app):
+    #     if not hasattr(g, 'flask_database_connection'):
+    #         # g.flask_database_connection = DatabaseConnection(test_mode=app.config['TESTING'])
+    #         g.flask_database_connection = DatabaseConnection(test_mode=os.getenv('APP_ENV') == 'test')
+    #         g.flask_database_connection.connect()
+    #     return g.flask_database_connection
+
 def get_flask_database_connection(app):
     if not hasattr(g, 'flask_database_connection'):
         g.flask_database_connection = DatabaseConnection(test_mode=app.config['TESTING'])
+        # g.flask_database_connection = DatabaseConnection(
+        #     test_mode=os.getenv('APP_ENV') == 'test')
         g.flask_database_connection.connect()
     return g.flask_database_connection

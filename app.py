@@ -1,10 +1,62 @@
 import os
-from flask import Flask, request
+from flask import Flask, request 
+from lib.database_connection import get_flask_database_connection
+from lib.album_repository import AlbumRepository
+from lib.album import Album
+from lib.artist_repository import ArtistRepository
+from lib.artist import Artist
+
 
 # Create a new Flask app
 app = Flask(__name__)
 
 # == Your Routes Here ==
+
+@app.route('/albums', methods=['POST'])
+def post_albums():
+    connection = get_flask_database_connection(app)
+    repository = AlbumRepository(connection)
+    album = Album(None, request.form['title'], request.form['release_year'], request.form['artist_id'])
+    repository.create(album)
+    return '', 200
+
+
+@app.route('/albums', methods=['GET'])
+def get_albums():
+    connection = get_flask_database_connection(app)
+    repository = AlbumRepository(connection)
+    albums = repository.all()
+    return "\n".join(
+        f"{album}" for album in repository.all()
+            )
+
+@app.route('/artists', methods=['GET'])
+def get_artists():
+    connection = get_flask_database_connection(app)
+    repository = ArtistRepository(connection)
+    artists = repository.all()
+    return "\n".join(
+        f"{artist}" for artist in repository.all()
+            )
+
+@app.route('/artists/names', methods=['GET'])
+def get_artists_names():
+    connection = get_flask_database_connection(app)
+    repository = ArtistRepository(connection)
+    
+    return ", ".join(repository.artist_names())
+
+@app.route('/artists', methods=['POST'])
+def post_artists():
+    connection = get_flask_database_connection(app)
+    repository = ArtistRepository(connection)
+    artist = Artist(None, request.form['name'], request.form['genre'])
+    repository.create(artist)
+    return '', 200
+
+# call the function which returns the names and use join syntax 
+
+# /artists?name=db_connection
 
 # == Example Code Below ==
 
